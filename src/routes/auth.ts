@@ -2,6 +2,7 @@ import { NextFunction, Router, Request, Response } from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt"
+import auth from "../helpers/isAuth";
 
 const router = Router();
 
