@@ -1,5 +1,6 @@
 import { NextFunction, Router, Request, Response } from "express";
 import User from "../models/user";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -19,7 +20,17 @@ router.post("/signup", async (req: Request<{}, {}, {name: string; email: string;
         password: req.body.password
     });
     try{
-        await newUser.save();
+        const user = await newUser.save();
+        const payload = {
+            "user": user._id
+        }
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET || "secret", {
+            expiresIn: '1d'
+        })
+        return res.json({
+            email: user.email,
+            accessToken
+        });
     } catch(e: any) {
         if(e.message == "A User with the same details already exists."){
             return res.json({
@@ -32,9 +43,6 @@ router.post("/signup", async (req: Request<{}, {}, {name: string; email: string;
             });
         }
     }
-    return res.json({
-        message: "User Created"
-    })
 });
 
 export default router;
