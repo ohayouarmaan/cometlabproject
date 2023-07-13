@@ -1,6 +1,7 @@
 import { NextFunction, Router, Request, Response } from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt"
 
 const router = Router();
 
@@ -42,6 +43,39 @@ router.post("/signup", async (req: Request<{}, {}, {name: string; email: string;
                 message: "Something went wrong."
             });
         }
+    }
+});
+
+router.post('/login', async(req: Request<{}, {}, {email: string, password: string}>, res: Response, next: NextFunction) => {
+    const foundUser = await User.findOne({email: req.body.email});
+    if(foundUser){
+        const isMatch = await bcrypt.compare(req.body.password, foundUser.password);
+        if(!isMatch) {
+            return res.json({
+                error: "invalid password"
+            });
+        };
+        const payload = {
+            "user": foundUser._id
+        };
+        try{
+            const signedPayload = await jwt.sign(payload, process.env.JWT_SECRET || "secret", {
+                expiresIn: "1d"
+            });
+            return res.json({
+                email: foundUser.email,
+                accessToken: signedPayload
+            });
+        } catch(e: any){
+            return res.json({
+                error: e.message
+            });
+        }
+
+    } else {
+        return res.json({
+            error: "No such user found."
+        })
     }
 });
 
