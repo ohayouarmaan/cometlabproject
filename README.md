@@ -28,36 +28,42 @@ POST /problem/new
 authroization: <JWT_TOKEN_ADMIN>
 { "name": "multiplies by 2", "description": "Given an integer through the stdin it prints the times 2 of that integer. EXAMPLE: STDIN: 2 STDOUT: 4" }
 ```
+![new problem](https://drive.google.com/uc?id=1hsFY51Wp2URUeyERfrqWISo3EuWlMWf-)
+
 
 ```HTTP
 DELETE /problem/delete
 authroization: <JWT_TOKEN_ADMIN>
 { "id": "<sphere id of the problem>" }
 ```
+![delete problem](https://drive.google.com/uc?id=1_wMGsaIw_beWbZHoG0K0IkQiWbpM2h67)
 
 ```HTTP
 PUT /problem/update
 authroization: <JWT_TOKEN_ADMIN>
 { "id": "<sphere id of the problem>", "name": "test problem updated" }
 ```
-
+![Update problem](https://drive.google.com/uc?id=1kAgBwXmIQuwLhmgTp3hwUZxdzPT9pExM)
 
 ```HTTP
 POST /problem/check
 authroization: <JWT_TOKEN_ADMIN_OR_USER>
 { "problemId": <sphere id of the problem>, "source": "source code of user for example: print(int(input())*2)", "compilerId": <compiler id of the language which you are using in the source code for example the compiler id of python3.x is 116> }
 ```
+![Check problem](https://drive.google.com/uc?id=18m0A_E_lB9qVeQJzCe9dq98DQbrXshrs)
 
 ```HTTP
 POST /auth/signup
 { "name": "John Doe", "email": "johndoe@doe.com", "password": "password123" }
 ```
 
+![signup](https://drive.google.com/uc?id=1j_u7nLcOyvywuTq0PSRzpV8K1oE4pVi8)
+
 ```HTTP
 POST /auth/login
 { "email": "johndoe@doe.com", "password": "password123" }
 ```
-
+![login](https://drive.google.com/uc?id=1S4RCKs0Dv5YPNzg-ghMUj7dhsNLtDLJB)
 
 ## To run the clusters using Docker Compose
 
