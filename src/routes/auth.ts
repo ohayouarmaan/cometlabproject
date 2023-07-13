@@ -2,7 +2,8 @@ import { NextFunction, Router, Request, Response } from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt"
-import auth from "../helpers/isAuth";
+import isAuth from "../helpers/isAuth";
+import isAdmin from "../helpers/isAdmin";
 
 const router = Router();
 
@@ -79,5 +80,11 @@ router.post('/login', async(req: Request<{}, {}, {email: string, password: strin
         })
     }
 });
+
+router.get("/test", isAuth, isAdmin, (req: Request, res: Response) => {
+    return res.json({
+        "Secret": "wow"
+    })
+})
 
 export default router;
