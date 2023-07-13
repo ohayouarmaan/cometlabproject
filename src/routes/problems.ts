@@ -15,14 +15,12 @@ router.post(
     res: Response
   ) => {
     const problemsUrl = `${process.env.SPHERE_BASE_PROBLEM_URL}/problems?access_token=${process.env.PROBLEMS_API}`;
-    console.log(problemsUrl);
     try {
       const problemsRes = await axios.post(problemsUrl, {
         name: req.body.name,
         body: req.body.description,
         masterjudgeId: "1001",
       });
-      console.log(problemsRes.data);
       const newProblem = new Problem({
         name: req.body.name,
         description: req.body.description,
@@ -32,7 +30,6 @@ router.post(
       const savedProblem = await newProblem.save();
       return res.json(savedProblem);
     } catch (e: any) {
-      console.log("HI?");
       console.log(e.message);
     }
   }
@@ -157,7 +154,7 @@ router.post(
     req: Request<
       {},
       {},
-      { problemId: Number; source: String; compilerId: Number, wh: string }
+      { problemId: Number; source: String; compilerId: Number }
     >,
     res: Response,
     next
@@ -170,10 +167,20 @@ router.post(
         compilerId: req.body.compilerId
       });
       console.log(submission.data);
-      return res.json({
-        message: 'Submitted, waiting for checks',
-        id: submission.data.id
-      });
+      let status: {status?: string; output?: string; error?: string} = {};
+      const statusInterval = await setInterval(async () => {
+        const { data } = await axios.get(`${process.env.SPHERE_BASE_PROBLEM_URL}/submissions/${submission.data.id}?access_token=${process.env.PROBLEMS_API}`);
+        console.log(data.executing);
+        if(!data.executing){
+          status.status = data.result.status.name;
+          const output = (await axios.get(data.result.streams.output.uri));
+          const error = (await axios.get(data.result.streams.error.uri));
+          status.output = output.data;
+          status.error = error.data;
+          clearInterval(statusInterval);
+          return res.json(status);
+        }
+      }, 2000);
     } catch (e: any) {
       return res.json({
         error: e.message

@@ -5,6 +5,7 @@ import ProblemRouter from "./routes/problems";
 import cors from "cors";
 import WebHook from "./routes/wh";
 import { config } from "dotenv";
+import morgan from "morgan";
 
 config();
 
@@ -17,6 +18,7 @@ async function main() {
         await prerun();
         const port = process.env.PORT || 3000
 
+        app.use(morgan("short"));
         app.use("/auth", AuthRouter);
         app.use("/problem", ProblemRouter);
         app.use("/wh", WebHook);
