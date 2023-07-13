@@ -4,6 +4,8 @@ services:
     container_name: cometlabs
     restart: always
     build: .
+    env_file:
+      - .env
     ports: 
     - "${PORT}:${PORT}"
     external_links:
